@@ -10,10 +10,22 @@ void printElemT(FILE *file, Elem_t value) {
 }
 
 int _treeCtor(Tree_t *tree, PrintFunction_t func) {
-    CHECK(!tree, TREE_NULL);
+    CHECK(!tree, tree, TREE_NULL);
 
     tree->root      = nullptr;
     tree->printFunc = func;
+
+    return TREE_OK;
+}
+
+void textDump(Tree_t *tree, int errCode) {
+
+}
+
+int treeDtor(Tree_t *tree) {
+    CHECK(!tree, tree, TREE_NULL);
+
+    free(tree);
 
     return TREE_OK;
 }

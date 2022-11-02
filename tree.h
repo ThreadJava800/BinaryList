@@ -42,31 +42,47 @@ struct Tree_t {
     #endif
 };
 
+#if _DEBUG
 
-#define CHECK(expression, errCode) { \
-    if (expression) {                 \
-        return errCode;                \
-    }                                   \
-}                                        \
+#define CHECK(expression, tree, errCode) { \
+    if (expression) {                       \
+        textDump(tree);                      \
+        return errCode;                       \
+    }                                          \
+}                                               \
+
+#else
+
+#define CHECK(expression, tree, errCode) { \
+    if (expression) {                       \
+        return errCode;                      \
+    }                                         \
+}                                              \
+
+#endif
 
 int _treeCtor(Tree_t *tree, PrintFunction_t func = printElemT);
 
+void textDump(Tree_t *tree, int errCode = 0);
+
+int treeDtor(Tree_t *tree);
+
 #if _DEBUG
 
-    #define treeCtor(tree, ...) {\
-        (tree)->debugInfo.createFunc = __PRETTY_FUNCTION__;\
-        (tree)->debugInfo.createFile = __FILE__;\
-        (tree)->debugInfo.createLine = __LINE__;\
-        (tree)->debugInfo.name = #tree;\
-        _treeCtor(tree, ##__VA_ARGS__);\
-    }\
+    #define treeCtor(tree, ...) {                               \
+        (tree)->debugInfo.createFunc = __PRETTY_FUNCTION__;      \
+        (tree)->debugInfo.createFile = __FILE__;                  \
+        (tree)->debugInfo.createLine = __LINE__;                   \
+        (tree)->debugInfo.name = #tree;                             \
+        _treeCtor(tree, ##__VA_ARGS__);                              \
+    }                                                                 \
 
     void closeLogfile(void);
 
 #else 
 
-    #define stackCtor(tree, ...) {\
-        _treeCtor(tree, ##__VA_ARGS__);\
-    }\
+    #define stackCtor(tree, ...) {          \
+        _treeCtor(tree, ##__VA_ARGS__);      \
+    }                                         \
 
 #endif
