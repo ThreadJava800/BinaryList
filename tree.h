@@ -18,71 +18,48 @@ enum TreeErrors {
     NULL_PTR  = 1 << 2,
 };
 
-struct TreeElement_t {
-    Elem_t         value    = {};
-    TreeElement_t* left     = nullptr;
-    TreeElement_t* right    = nullptr;
-};
+struct Node_t {
+    Elem_t  value    = {};
+    Node_t* left     = nullptr;
+    Node_t* right    = nullptr;
+    Node_t* previous = nullptr;
 
-#if _DEBUG
-struct TreeDebug_t {
-    const char *createFunc = nullptr; 
-    const char *createFile = nullptr; 
-    const char *name       = nullptr;
-    int         createLine = 0;
-};
-#endif
-
-struct Tree_t {
-    TreeElement_t   *root      = nullptr;
-    PrintFunction_t  printFunc = printElemT;
-
-    #if _DEBUG
-    TreeDebug_t debugInfo  = {};
-    #endif
+    PrintFunction_t printFunc = printElemT;
 };
 
 #if _DEBUG
 
-#define CHECK(expression, tree, errCode) { \
+#define CHECK(expression, node, errCode) { \
     if (expression) {                       \
-        textDump(tree);                      \
-        return errCode;                       \
-    }                                          \
-}                                               \
+        if (err) *err = errCode;             \
+        textDump(node, errCode);              \
+        exit(errCode);                         \
+    }                                           \
+}                                                \
 
 #else
 
-#define CHECK(expression, tree, errCode) { \
+#define CHECK(expression, node, errCode) { \
     if (expression) {                       \
-        return errCode;                      \
-    }                                         \
-}                                              \
+        if (err) *err = errCode;             \
+        exit(errCode);                        \
+    }                                          \
+}                                               \
 
 #endif
 
-int _treeCtor(Tree_t *tree, PrintFunction_t func = printElemT);
+Node_t* nodeCtor(Elem_t value, Node_t *left, Node_t *right, Node_t *previous, PrintFunction_t printFunc, int *err = nullptr);                                                                                                 \
 
-void textDump(Tree_t *tree, int errCode = 0);
+Node_t* addRightLeaf(Node_t *node, Elem_t value, int *err = nullptr);
 
-int treeDtor(Tree_t *tree);
+Node_t* addLeftLeaf(Node_t *node, Elem_t value, int *err = nullptr);
 
-#if _DEBUG
+void nodeDtor(Node_t *node, int *err = nullptr);
 
-    #define treeCtor(tree, ...) {                               \
-        (tree)->debugInfo.createFunc = __PRETTY_FUNCTION__;      \
-        (tree)->debugInfo.createFile = __FILE__;                  \
-        (tree)->debugInfo.createLine = __LINE__;                   \
-        (tree)->debugInfo.name = #tree;                             \
-        _treeCtor(tree, ##__VA_ARGS__);                              \
-    }                                                                 \
+void printErrMsg(FILE* file, int errCode);
 
-    void closeLogfile(void);
+void dumpNode(FILE* file, Node_t *node);
 
-#else 
+void textDump(Node_t *node, int errCode = 1 << 0);
 
-    #define stackCtor(tree, ...) {          \
-        _treeCtor(tree, ##__VA_ARGS__);      \
-    }                                         \
-
-#endif
+void closeLogfile(void);
