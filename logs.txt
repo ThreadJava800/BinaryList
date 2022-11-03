@@ -1,1 +1,2 @@
+Assertion failed in int main() at main.cpp(11): Tree was null (2)
 (((New Left)Left(Right Left))Test(Right(New Right)))

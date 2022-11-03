@@ -54,18 +54,19 @@ void nodeDtor(Node_t *node, int *err) {
     free(node);
 }
 
-void printErrMsg(FILE* file, int errCode) {
+void printErrMsg(FILE* file, const char *createFunc, const char *createFile, int createLine, int errCode) {
+    fprintf(file, "Assertion failed in %s at %s(%d): ", createFunc, createFile, createLine);\
     switch (errCode) {
         case TREE_OK:
             break;
         case NULL_PTR:
-            fprintf(file, "Assertion failed: NULL POINTER (%d)\n", errCode);
+            fprintf(file, "NULL POINTER (%d)\n", errCode);
             break;
         case TREE_NULL:
-            fprintf(file, "Assertion failed: Tree was null (%d)\n", errCode);
+            fprintf(file, "Tree was null (%d)\n", errCode);
             break;
         default:
-            fprintf(file, "Assertion failed: Unknown error: %d\n", errCode);
+            fprintf(file, "Unknown error: %d\n", errCode);
             break;
     }
 }
@@ -76,7 +77,6 @@ void dumpNode(FILE* file, Node_t *node) {
     fprintf(file, "(");
 
     if (node->left) dumpNode(file, node->left);
-    //fprintf(file, ")");
 
     node->printFunc(logFile, node->value);
 
@@ -84,9 +84,51 @@ void dumpNode(FILE* file, Node_t *node) {
     fprintf(file, ")");
 }
 
-void textDump(Node_t *node, int errCode) {
-    printErrMsg(logFile, errCode);
+void textDump(Node_t *node, const char *createFunc, const char *createFile, int createLine, int errCode) {
+    printErrMsg(logFile, createFunc, createFile, createLine, errCode);
     dumpNode(logFile, node);
+}
+
+void graphNode(Node_t *node, FILE *tempFile) {
+    fprintf(
+                tempFile, 
+                "\tlabel%p[shape=record, style=\"rounded, filled\", fillcolor=red, label=\"{ {val: ",
+                node
+            );
+
+    node->printFunc(tempFile, node->value);
+    
+    fprintf(
+                tempFile, 
+                " | {left: %p | right: %p} | previous: %p }}\"];\n", 
+                node->left,
+                node->right,
+                node->previous
+            );
+
+    if (node->previous) {
+        fprintf(tempFile, "\tlabel%p->label%p [color=\"red\", style=\"dashed\",arrowhead=\"none\"]", node->previous, node);
+    }
+
+    if (node->left) graphNode(node->left, tempFile);
+
+    if (node->right) graphNode(node->right, tempFile);
+}
+
+void graphDump(Node_t *node) {
+    if (!node) return;
+
+    FILE *tempFile = fopen("temp.dot", "w");
+    fprintf(tempFile, "digraph tree {\n");
+    fprintf(tempFile, "\trankdir=HR;\n");
+    if (!tempFile) return;
+
+    graphNode(node, tempFile);
+
+    fprintf(tempFile, "}");
+    fclose(tempFile);
+
+    system("dot -Tsvg temp.dot > graph.png");
 }
 
 #if _DEBUG

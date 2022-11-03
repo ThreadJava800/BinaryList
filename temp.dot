@@ -1,0 +1,9 @@
+digraph tree {
+	rankdir=HR;
+	label0x604000000010[shape=record, style="rounded, filled", fillcolor=red, label="{ {val: Test | {left: 0x604000000050 | right: 0x6040000000d0} | previous: (nil) }}"];
+	label0x604000000050[shape=record, style="rounded, filled", fillcolor=red, label="{ {val: Left | {left: 0x604000000090 | right: 0x604000000150} | previous: 0x604000000010 }}"];
+	label0x604000000010->label0x604000000050 [color="red", style="dashed",arrowhead="none"]	label0x604000000090[shape=record, style="rounded, filled", fillcolor=red, label="{ {val: New Left | {left: (nil) | right: (nil)} | previous: 0x604000000050 }}"];
+	label0x604000000050->label0x604000000090 [color="red", style="dashed",arrowhead="none"]	label0x604000000150[shape=record, style="rounded, filled", fillcolor=red, label="{ {val: Right Left | {left: (nil) | right: (nil)} | previous: 0x604000000050 }}"];
+	label0x604000000050->label0x604000000150 [color="red", style="dashed",arrowhead="none"]	label0x6040000000d0[shape=record, style="rounded, filled", fillcolor=red, label="{ {val: Right | {left: (nil) | right: 0x604000000110} | previous: 0x604000000010 }}"];
+	label0x604000000010->label0x6040000000d0 [color="red", style="dashed",arrowhead="none"]	label0x604000000110[shape=record, style="rounded, filled", fillcolor=red, label="{ {val: New Right | {left: (nil) | right: (nil)} | previous: 0x6040000000d0 }}"];
+	label0x6040000000d0->label0x604000000110 [color="red", style="dashed",arrowhead="none"]}

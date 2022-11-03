@@ -120,3 +120,5 @@ log.txt
 
 mlibs/
 cpu/SFML-2.5.1/
+
+main.cpp

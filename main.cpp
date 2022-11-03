@@ -8,7 +8,8 @@ int main() {
     addRightLeaf(tree, "Right");
     addRightLeaf(tree->right, "New Right");
     addRightLeaf(tree->left, "Right Left");
-    textDump(tree);
+    DUMP(tree, 1 << 1);
+    graphDump(tree);
 
     nodeDtor(tree);
 

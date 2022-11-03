@@ -27,12 +27,16 @@ struct Node_t {
     PrintFunction_t printFunc = printElemT;
 };
 
+#define DUMP(node, ...) {                                                   \
+    textDump(node, __PRETTY_FUNCTION__, __FILE__, __LINE__, ##__VA_ARGS__);  \
+}                                                                             \
+
 #if _DEBUG
 
 #define CHECK(expression, node, errCode) { \
     if (expression) {                       \
         if (err) *err = errCode;             \
-        textDump(node, errCode);              \
+        DUMP(node, errCode);                  \
         exit(errCode);                         \
     }                                           \
 }                                                \
@@ -56,10 +60,14 @@ Node_t* addLeftLeaf(Node_t *node, Elem_t value, int *err = nullptr);
 
 void nodeDtor(Node_t *node, int *err = nullptr);
 
-void printErrMsg(FILE* file, int errCode);
+void printErrMsg(FILE* file, const char *createFunc, const char *createFile, int createLine, int errCode);
 
 void dumpNode(FILE* file, Node_t *node);
 
-void textDump(Node_t *node, int errCode = 1 << 0);
+void textDump(Node_t *node, const char *createFunc, const char *createFile, int createLine, int errCode = 1 << 0);
+
+void graphNode(Node_t *node, FILE *tempFile);
+
+void graphDump(Node_t *node);
 
 void closeLogfile(void);
