@@ -6,7 +6,7 @@
 #define _DEBUG 0
 #endif
 
-typedef char* Elem_t;
+typedef const char* Elem_t;
 
 typedef void (*PrintFunction_t)(FILE *file, Elem_t value);
 
